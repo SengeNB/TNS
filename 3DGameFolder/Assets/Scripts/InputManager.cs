@@ -20,7 +20,6 @@ public class NewBehaviourScript : MonoBehaviour
     public float bulletPrefabLifeTime = 1f;
     public bool isShooting;
 
-
     // Start is called before the first frame update
     void Awake()
     {
@@ -68,12 +67,14 @@ public class NewBehaviourScript : MonoBehaviour
         if (isShooting)
         {
             FireWeapon();
+          
         }
 
     }
 
     public void FireWeapon()
     {
+        
         // Spawning the bullet
         GameObject bullet = Instantiate(bulletPrefab, bulletSpawn.position, Quaternion.identity);
 
@@ -82,6 +83,7 @@ public class NewBehaviourScript : MonoBehaviour
 
         // Destroy the bullet
         StartCoroutine(DestroyBulletAfterTime(bullet, bulletPrefabLifeTime));
+
 
     }
 

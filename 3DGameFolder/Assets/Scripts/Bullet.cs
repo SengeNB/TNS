@@ -1,21 +1,24 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public class Bullet : MonoBehaviour
 {
 
     private void OnCollisionEnter(Collision collision)
     {
-        if (collision.gameObject.CompareTag("Target"))
+        Transform hitTransform = collision.transform;
+        if (hitTransform.gameObject.CompareTag("Target"))
         {
-            print("hit " + collision.gameObject.name + " !");
+            print("hit " + hitTransform.gameObject.name + " !");
             Destroy(gameObject);
+            hitTransform.GetComponent<EnemyHealth>().TakeDamage(1);
         }
 
-        if (collision.gameObject.CompareTag("Terrain"))
+        if (hitTransform.gameObject.CompareTag("Terrain"))
         {
-            print("hit a terrain !");
+            //print("hit a terrain !");
             Destroy(gameObject);
         }
     }

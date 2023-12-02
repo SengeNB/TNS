@@ -8,12 +8,19 @@ public class Enemy : MonoBehaviour
     private StateMachine stateMachine;
     private NavMeshAgent agent;
     public NavMeshAgent Agent { get => agent; }
+    public GameObject Player { get => player; }
     [SerializeField]
     private string currentState;
     public Path path;
     private GameObject player;
+    private Vector3 lastKnowPos;
+    public Vector3 LastKnowPos { get => lastKnowPos; set => lastKnowPos = value; }
     public float sightDistance = 20f;
     public float fieldOfView = 85f;
+    public float eyeHeight;
+    public Transform gunBarrel;
+    [Range(0.1f,10f)]
+    public float fireRate;
 
     // Start is called before the first frame update
     void Start()
@@ -28,6 +35,7 @@ public class Enemy : MonoBehaviour
     void Update()
     {
         CanSeePlayer();
+        currentState = stateMachine.activeState.ToString();
     }
 
     public bool CanSeePlayer()
@@ -36,15 +44,24 @@ public class Enemy : MonoBehaviour
         {
             if(Vector3.Distance(transform.position,player.transform.position) < sightDistance)
             {
-                Vector3 targetDirection = player.transform.position - transform.position;
+                Vector3 targetDirection = player.transform.position - transform.position - (Vector3.up * eyeHeight);
                 float angleToPlayer = Vector3.Angle(targetDirection, transform.forward);
                 if(angleToPlayer >= -fieldOfView && angleToPlayer <= fieldOfView)
                 {
-                    Ray ray = new Ray(transform.position, targetDirection);
-                    Debug.DrawRay(ray.origin, ray.direction * sightDistance);
+                    Ray ray = new Ray(transform.position + (Vector3.up * eyeHeight), targetDirection);
+                    RaycastHit hitInfo = new RaycastHit();
+                    if(Physics.Raycast(ray,out hitInfo, sightDistance))
+                    {
+                        if (hitInfo.transform.gameObject == player)
+                        {
+                            Debug.DrawRay(ray.origin, ray.direction * sightDistance);
+                            return true;
+                        }
+                    }
                 }
             }
         }
-        return true;
+        return false;
+        
     }
 }
